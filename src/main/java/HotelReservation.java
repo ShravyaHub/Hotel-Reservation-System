@@ -13,15 +13,15 @@ public class HotelReservation {
         System.out.println("Welcome to Hotel Reservation System");
     }
 
-    public void addHotelDetails(String hotelName, int weekDayRate, int weekendRate, int rating) {
-        HotelDetails hotelDetails = new HotelDetails(hotelName, weekDayRate, weekendRate, rating);
+    public void addHotelDetails(String hotelName, int weekDayRate, int weekendRate, int rating, int rewardCutomerWeekdayRates, int rewardCustomerWeekendRates) {
+        HotelDetails hotelDetails = new HotelDetails(hotelName, weekDayRate, weekendRate, rating, rewardCutomerWeekdayRates, rewardCustomerWeekendRates);
         HotelList.add(hotelDetails);
     }
 
     public ArrayList<String> findCheapestHotelForRegularCustomer(String arrival, String checkout) {
-        addHotelDetails("Lakewood",110,90, 3);
-        addHotelDetails("Bridgewood",150, 50, 4);
-        addHotelDetails("Ridgewood",220, 150, 5);
+        addHotelDetails("Lakewood",110,90, 3, 80, 80);
+        addHotelDetails("Bridgewood",150, 50, 4, 110, 50);
+        addHotelDetails("Ridgewood",220, 150, 5, 100, 40);
         LocalDate arrivalDate = convertStringToDate(arrival);
         LocalDate checkoutDate = convertStringToDate(checkout);
         cheapestHotelNameList = new ArrayList<>();
@@ -81,9 +81,9 @@ public class HotelReservation {
     }
 
     public String findBestRatedHotelForRegularCustomer(String arrival, String checkout) {
-        addHotelDetails("Lakewood",110,90, 3);
-        addHotelDetails("Bridgewood",150, 50, 4);
-        addHotelDetails("Ridgewood",220, 150, 5);
+        addHotelDetails("Lakewood",110,90, 3, 80, 80);
+        addHotelDetails("Bridgewood",150, 50, 4, 110, 50);
+        addHotelDetails("Ridgewood",220, 150, 5, 100, 40);
         LocalDate arrivalDate = convertStringToDate(arrival);
         LocalDate checkoutDate = convertStringToDate(checkout);
         int minRate = Integer.MAX_VALUE;
