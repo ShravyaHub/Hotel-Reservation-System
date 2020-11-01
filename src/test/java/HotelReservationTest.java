@@ -20,7 +20,7 @@ public class HotelReservationTest {
     }
 
     @Test
-    public void givenThreeHotels_ForGivenDates_HavingBothWeekDayAndWeekend_ShouldReturnCheapestHotels() {
+    public void givenThreeHotels_ForGivenDatesHavingBothWeekDayAndWeekend_ShouldReturnCheapestHotels() {
         HotelReservation hotelReservation = new HotelReservation();
         Object[] hotelName = hotelReservation.findCheapestHotelForRegularCustomer("11Sep2020", "12Sep2020").toArray();
         Object[] expectedHotelName = {"Lakewood","Bridgewood"};
