@@ -8,6 +8,7 @@ public class HotelReservation {
     ArrayList<HotelDetails> HotelList = new ArrayList<>();
     ArrayList<String> cheapestHotelNameList;
     HashMap<String, Integer> hotelRatingMap;
+    HashMap<String, Integer> hotelRateMap;
 
     public void printWelcomeMessage() {
         System.out.println("Welcome to Hotel Reservation System");
@@ -18,7 +19,7 @@ public class HotelReservation {
         HotelList.add(hotelDetails);
     }
 
-    public ArrayList<String> findCheapestHotelForRegularCustomer(String arrival, String checkout) {
+    public ArrayList<String> findCheapestHotel(String arrival, String checkout, boolean rewardCustomer) {
         addHotelDetails("Lakewood",110,90, 3, 80, 80);
         addHotelDetails("Bridgewood",150, 50, 4, 110, 50);
         addHotelDetails("Ridgewood",220, 150, 5, 100, 40);
@@ -26,6 +27,7 @@ public class HotelReservation {
         LocalDate checkoutDate = convertStringToDate(checkout);
         cheapestHotelNameList = new ArrayList<>();
         hotelRatingMap = new HashMap<>();
+        hotelRateMap = new HashMap<>();
         int minRate = Integer.MAX_VALUE;
         for (HotelDetails hotelDetails : HotelList) {
             LocalDate start = arrivalDate;
@@ -36,30 +38,41 @@ public class HotelReservation {
                 int day = start.getDayOfWeek().getValue();
 
                 if (day == 6 || day == 7){
-                    hotelRent = hotelRent + hotelDetails.getWeekendRate();
-                    System.out.println(hotelRent);
+                    if(rewardCustomer) {
+                        hotelRent = hotelRent + hotelDetails.getRewardCustomerWeekendrate();
+                    } else {
+                        hotelRent = hotelRent + hotelDetails.getWeekendRate();
+                    }
                 }
                 else{
-                    hotelRent = hotelRent + hotelDetails.getWeekdayRate();
-                    System.out.println(hotelRent);
+                    if(rewardCustomer) {
+                        hotelRent = hotelRent + hotelDetails.getRewardCustomerWeekdayRate();
+                    } else {
+                        hotelRent = hotelRent + hotelDetails.getWeekdayRate();
+                    }
                 }
                 start = start.plusDays(1);
             }
             if (hotelRent <= minRate) {
                 minRate = hotelRent;
-                cheapestHotelNameList.add(hotelDetails.getHotelName());
+                hotelRateMap.put(hotelDetails.getHotelName(), hotelRent);
                 hotelRatingMap.put(hotelDetails.getHotelName(), hotelDetails.getRating());
             }
         }
+        for (Map.Entry<String, Integer> entry : hotelRateMap.entrySet()) {
+            if (entry.getValue().equals(minRate)) {
+                cheapestHotelNameList.add(entry.getKey());
+            }
+        }
         for (String hotel: cheapestHotelNameList){
-            System.out.println("Hotel Name: "+hotel+" Total Rate $"+minRate);
+            System.out.println("Hotel Name: " + hotel + " Total Rate $" + minRate);
         }
         return cheapestHotelNameList;
     }
 
-    public String cheapestBestRatedHotel(String arrival, String checkout) {
+    public String cheapestBestRatedHotel(String arrival, String checkout, boolean rewardCustomer) {
 
-        findCheapestHotelForRegularCustomer(arrival, checkout);
+        findCheapestHotel(arrival, checkout, rewardCustomer);
         Map.Entry<String, Integer> cheapestBestRatedHotel = null;
         for (Map.Entry<String, Integer> entry : hotelRatingMap.entrySet()) {
             if (cheapestBestRatedHotel == null || entry.getValue().compareTo(cheapestBestRatedHotel.getValue()) > 0) {
@@ -80,16 +93,16 @@ public class HotelReservation {
         return date;
     }
 
-    public String findBestRatedHotelForRegularCustomer(String arrival, String checkout) {
+    public String findBestRatedHotel(String arrival, String checkout, boolean rewardCustomer) {
         addHotelDetails("Lakewood",110,90, 3, 80, 80);
         addHotelDetails("Bridgewood",150, 50, 4, 110, 50);
         addHotelDetails("Ridgewood",220, 150, 5, 100, 40);
         LocalDate arrivalDate = convertStringToDate(arrival);
         LocalDate checkoutDate = convertStringToDate(checkout);
-        int minRate = Integer.MAX_VALUE;
+        int totalHotelRent = 0;
         int bestRating = 0;
         HotelDetails BestRatedHotel = null;
-        for (HotelDetails hotel : HotelList) {
+        for (HotelDetails hotelDetails : HotelList) {
             LocalDate start = arrivalDate;
             LocalDate end = checkoutDate.plusDays(1);
             int hotelRent = 0;
@@ -98,20 +111,63 @@ public class HotelReservation {
                 int day = start.getDayOfWeek().getValue();
 
                 if (day == 6 || day == 7){
-                    hotelRent = hotelRent + hotel.getWeekendRate();
+                    if(rewardCustomer) {
+                        hotelRent = hotelRent + hotelDetails.getRewardCustomerWeekendrate();
+                    } else {
+                        hotelRent = hotelRent + hotelDetails.getWeekendRate();
+                    }
                 }
                 else{
-                    hotelRent = hotelRent + hotel.getWeekdayRate();
+                    if(rewardCustomer) {
+                        hotelRent = hotelRent + hotelDetails.getRewardCustomerWeekdayRate();
+                    } else {
+                        hotelRent = hotelRent + hotelDetails.getWeekdayRate();
+                    }
                 }
                 start = start.plusDays(1);
             }
-            if(hotel.getRating()>bestRating){
-                bestRating = hotel.getRating();
-                BestRatedHotel = hotel;
+            if(hotelDetails.getRating() > bestRating){
+                bestRating = hotelDetails.getRating();
+                BestRatedHotel = hotelDetails;
+                totalHotelRent = hotelRent;
             }
         }
-        System.out.println("Hotel Name: "+BestRatedHotel.getHotelName()+", Rating: "+bestRating+" and Total Rate $"+minRate);
+        System.out.println("Hotel Name: " + BestRatedHotel.getHotelName() + ", Rating: " + bestRating + " and Total Rate $" + totalHotelRent);
         return BestRatedHotel.getHotelName();
+    }
+
+    public static void main(String[] args) throws InvalidUserChoiceException {
+        System.out.println("Welcome to Hotel Reservation System");
+        Scanner scanner = new Scanner(System.in);
+        HotelReservation hotelReservation = new HotelReservation();
+        while (true) {
+            System.out.println("Are you a reward customer(true/false): ");
+            boolean rewardCustomer = scanner.nextBoolean();
+            scanner.nextLine();
+            System.out.println("Enter arrival date: ");
+            String arrival = scanner.nextLine();
+            System.out.println("Enter the departure date: ");
+            String departure = scanner.nextLine();
+            System.out.println("Choose: \n 1.Best rated hotel\n 2.Cheapest hotel\n 3.Cheapest Best Rated Hotel");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    hotelReservation.findBestRatedHotel(arrival, departure, rewardCustomer);
+                    break;
+
+                case 2:
+                    hotelReservation.findCheapestHotel(arrival, departure, rewardCustomer);
+                    break;
+
+                case 3:
+                    hotelReservation.cheapestBestRatedHotel(arrival, departure, rewardCustomer);
+                    break;
+
+                default:
+                    throw new InvalidUserChoiceException("Invalid choice");
+            }
+        }
     }
 
 }
