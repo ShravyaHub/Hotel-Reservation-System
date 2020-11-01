@@ -26,4 +26,11 @@ public class HotelReservationTest {
         Object[] expectedHotelName = {"Lakewood","Bridgewood"};
         Assert.assertArrayEquals(expectedHotelName, hotelName);
     }
+
+    @Test
+    public void givenThreeHotel_sForGivenDatesHavingBestRating_ShouldReturnCheapestBestRatedHotel() {
+        HotelReservation hotelReservation = new HotelReservation();
+        String hotelName = hotelReservation.cheapestBestRatedHotel("11Sep2020", "12Sep2020");
+        Assert.assertEquals("Bridgewood", hotelName);
+    }
 }
