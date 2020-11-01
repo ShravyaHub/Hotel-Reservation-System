@@ -96,7 +96,7 @@ public class HotelReservation {
             }
         }
         for (String hotel: cheapestHotelNameList){
-            System.out.println("Hotel Name: " + hotel + " Total Rate $" + minRate);
+            System.out.println("Cheapest Hotel Name: " + hotel + " Total Rate $" + minRate);
         }
         return cheapestHotelNameList;
     }
@@ -108,7 +108,7 @@ public class HotelReservation {
         HotelDetails bestRatedHotel = cheapestHotelsList.stream().max(Comparator.comparingInt(HotelDetails::getRating)).get();
         String cheapestHotel = bestRatedHotel.getHotelName();
         int bestRating = bestRatedHotel.getRating();
-        System.out.println("Hotel Name: " + cheapestHotel + ", Rating: " + bestRating + " and Total Rate $" + minRate);
+        System.out.println("Cheapest Best Rated Hotel Name: " + cheapestHotel + ", Rating: " + bestRating + " and Total Rate $" + minRate);
         return cheapestHotel;
     }
 
@@ -167,6 +167,7 @@ public class HotelReservation {
     }
 
     public static void main(String[] args) throws InvalidUserChoiceException {
+        String dateRegex = "^(([0-9])|([0-2][0-9])|([3][0-1]))(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{4}$";
         System.out.println("Welcome to Hotel Reservation System");
         Scanner scanner = new Scanner(System.in);
         HotelReservation hotelReservation = new HotelReservation();
@@ -176,22 +177,26 @@ public class HotelReservation {
             scanner.nextLine();
             System.out.println("Enter arrival date: ");
             String arrival = scanner.nextLine();
-            System.out.println("Enter the departure date: ");
-            String departure = scanner.nextLine();
+            System.out.println("Enter the checkout date: ");
+            String checkout = scanner.nextLine();
+            if(!arrival.matches(dateRegex) && !checkout.matches(dateRegex)) {
+                System.out.println("Invalid date");
+                break;
+            }
             System.out.println("Choose: \n 1.Best rated hotel\n 2.Cheapest hotel\n 3.Cheapest Best Rated Hotel");
             int choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
                 case 1:
-                    hotelReservation.findBestRatedHotel(arrival, departure, rewardCustomer);
+                    hotelReservation.findBestRatedHotel(arrival, checkout, rewardCustomer);
                     break;
 
                 case 2:
-                    hotelReservation.findCheapestHotel(arrival, departure, rewardCustomer);
+                    hotelReservation.findCheapestHotel(arrival, checkout, rewardCustomer);
                     break;
 
                 case 3:
-                    hotelReservation.cheapestBestRatedHotel(arrival, departure, rewardCustomer);
+                    hotelReservation.cheapestBestRatedHotel(arrival, checkout, rewardCustomer);
                     break;
 
                 default:
